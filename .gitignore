@@ -1,5 +1,4 @@
 # Distribution / packaging
-.Python
 build/
 develop-eggs/
 dist/
@@ -18,7 +17,6 @@ wheels/
 MANIFEST
 
 # pyenv
-.python-version
 pyvenv.cfg
 
 # Carpeta de JetBrain

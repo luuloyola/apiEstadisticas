@@ -4,7 +4,7 @@ services:
     name: apiEstadisticas
     runtime: python
     plan: free
-    autoDeploy: false
+    autoDeploy: true
     pythonVersion: "3.12.7"
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
