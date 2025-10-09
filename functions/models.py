@@ -10,8 +10,6 @@ from classes.message import Message
 
 # Analizadores de mensajes
 sentiment_analyzer = create_analyzer(task="sentiment", lang="es")
-irony_analyzer = create_analyzer(task="irony", lang="es")
-hate_speech_analyzer = create_analyzer(task="hate_speech", lang="es")
 
 # Mensajes de prueba
 chat = [
@@ -91,11 +89,8 @@ def get_llm_response(chat: list[Message]):
 
 
 def get_message_analytics(message: str):
-    analytics = dict.fromkeys(['sentiment','irony', 'hateful'])
+    analytics = dict.fromkeys(['sentiment'])
     analytics.update({'sentiment': sentiment_analyzer.predict(message).output})
-    analytics.update({'irony': irony_analyzer.predict(message).output})
-    print(hate_speech_analyzer.predict(message).output)
-    analytics.update({'hateful': hate_speech_analyzer.predict(message).output})
     print(analytics)
     return analytics
 
