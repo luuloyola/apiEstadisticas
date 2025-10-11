@@ -10,14 +10,18 @@ Estadisticas
 - Tono irónico: T o F
 """
 class Statistics:
-    def __init__(self, hate, irony, min, sum, theme, bet, summary, chat_id, max):
+    def __init__(self, hate, irony, min, sum, theme, bet, summary, chat_id, max, chat_group_id, positive_percentage, negative_percentage, neutral_percentage):
         self.summary = summary
         self.chat_id = chat_id
+        self.chat_group_id = chat_group_id
         self.amount_messages = sum
         self.min_words_per_message = min
         self.max_words_per_message = max
-        self.hate_speech_percentage = hate
-        self.ironic_percentage = irony
+        self.hate_speech = hate
+        self.ironic = irony
+        self.positive_percentage = positive_percentage
+        self.negative_percentage = negative_percentage
+        self.neutral_percentage = neutral_percentage
         self.change_theme = theme
         self.bet_type = bet
 
@@ -42,17 +46,20 @@ class Statistics:
     def set_max_words_per_message(self, max_words_per_message):
         self.max_words_per_message = max_words_per_message
 
-    def set_ironic_percentage(self, ironic):
-        self.ironic_percentage = ironic
+    def set_ironic(self, ironic):
+        self.ironic = ironic
 
-    def set_hate_percentage(self, hate_speech):
-        self.hate_speech_percentage = hate_speech
+    def set_hate(self, hate_speech):
+        self.hate_speech = hate_speech
 
     def get_summary(self):
         return self.summary
 
     def get_chat_id(self):
         return self.chat_id
+
+    def get_chat_group_id(self):
+        return self.chat_group_id
 
     def get_amount_messages(self):
         return self.amount_messages
@@ -63,11 +70,20 @@ class Statistics:
     def get_max_words_per_message(self):
         return self.max_words_per_message
 
-    def get_hate_speech_percentage(self):
-        return self.hate_speech_percentage
+    def get_hate_speech(self):
+        return self.hate_speech
 
-    def get_ironic_percentage(self):
-        return self.ironic_percentage
+    def get_ironic(self):
+        return self.ironic
+
+    def get_positive_percentage(self):
+        return self.positive_percentage
+
+    def get_negative_percentage(self):
+        return self.negative_percentage
+
+    def get_neutral_percentage(self):
+        return self.neutral_percentage
 
     def get_change_theme(self):
         return self.change_theme
@@ -77,15 +93,16 @@ class Statistics:
 
     def __str__(self):
         return (
-            f"📊 Estadísticas del Chat (ID: {self.chat_id})\n"
-            f"- Resumen: {self.summary[:280]}{'...' if len(self.summary) > 280 else ''}\n"
+            f"📊 Estadísticas del Chat (ID: {self.chat_id}) (Grupo ID: {self.chat_group_id})\n"
+            f"- Resumen: {self.summary}\n"
             f"- Tipo de apuesta: {self.bet_type}\n"
             f"- Cantidad de mensajes: {self.amount_messages}\n"
             f"- Palabras por mensaje (mín): {self.min_words_per_message}\n"
             f"- Palabras por mensaje (máx): {self.max_words_per_message}\n"
-            f"- Lenguaje ofensivo: {'T' if self.hate_speech_percentage > 0 else 'F'} "
-            f"({self.hate_speech_percentage}%)\n"
-            f"- Tono irónico: {'T' if self.ironic_percentage > 0 else 'F'} "
-            f"({self.ironic_percentage}%)\n"
+            f"- Porcentaje de mensajes positivos: {self.positive_percentage}\n"
+            f"- Porcentaje de mensajes negativas: {self.negative_percentage}\n"
+            f"- Porcentaje de mensajes neutrales: {self.neutral_percentage}\n"
+            f"- Lenguaje ofensivo: {'T' if self.hate_speech else 'F'}\n"
+            f"- Tono irónico: {'T' if self.ironic else 'F'}\n"
             f"- Cambio de tema: {'T' if self.change_theme else 'F'}"
         )

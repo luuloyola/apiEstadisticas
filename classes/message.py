@@ -2,13 +2,16 @@ class Message:
   def __init__(self, rows: []):
     self.id = rows[0]
     self.chat_id = rows[1]
-    self.content = rows[2]
-    self.created_at = rows[3]
+    self.chat_group_id = rows[2]
+    self.content = rows[3]
+    self.created_at = rows[4]
     self.sentiment = None
-
 
   def get_id(self):
       return self.id
+
+  def get_chat_group_id(self):
+      return self.chat_group_id
 
   def get_content(self):
       return self.content

@@ -42,7 +42,8 @@ frase = ["Tengo un amigo gordo que es re puto y me cae mal",
          ]
 
 load_dotenv()
-client = genai.Client()
+api_key = os.getenv("GEMINI_API_KEY")
+client = genai.Client(api_key=api_key)
 system_prompt = os.getenv("SYSTEM_PROMPT")
 
 class BetType(enum.Enum):
@@ -54,45 +55,75 @@ class BetType(enum.Enum):
     NO_ESPECIFICA = "No especificado"
 
 class LlmResponse(BaseModel):
-    summary: str = Field(max_length=280)
+    summary: str = Field(max_length=400)
     bet_type: Optional[BetType]
+    hate_speech: bool
+    ironic: bool
     change_theme: bool
 
 def get_llm_response(chat: list[Message]):
     messages_content = []
     for m in chat:
         messages_content.append(m.get_content())
-
-    response = client.models.generate_content(
-        model="gemini-2.5-flash",
-        config=types.GenerateContentConfig(
-            system_instruction=system_prompt,
-            response_schema=LlmResponse),
-        contents=messages_content
-    )
-
-    print(response.text)
-
     try:
-        response_parsed: LlmResponse = response.parsed
-        print("\nPRIMERO EL OBJETO COMPLETO\n")
-        print(response_parsed)
-        print("\nAHORA ES SUMMARY")
-        print(response_parsed.summary)
-        print()
-        print(response_parsed.bet_type)
-        print(response_parsed.change_theme)
-        return response_parsed
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=messages_content,
+            config={
+                "system_instruction": system_prompt,
+                "response_mime_type": "application/json",
+                "response_schema": {
+                    "type": "OBJECT",
+                    "properties": {
+                        "summary": {
+                            "type": "STRING",
+                            "maxLength": 400
+                        },
+                        "bet_type": {
+                            "type": "STRING",
+                            "enum": [
+                                "Casino Presencial",
+                                "Casino Online",
+                                "Deportiva",
+                                "Loteria",
+                                "Videojuego",
+                                "No especificado"
+                            ]
+                        },
+                        "hate_speech": {
+                            "type": "BOOLEAN"
+                        },
+                        "ironic": {
+                            "type": "BOOLEAN"
+                        },
+                        "change_theme": {
+                            "type": "BOOLEAN"
+                        }
+                    },
+                    "required": ["summary", "hate_speech", "ironic", "change_theme"]
+                }
+            }
+        )
+
+        print(response.text)
+
+        try:
+            data = LlmResponse.model_validate_json(response.text)
+            print("\nPRIMERO EL OBJETO COMPLETO\n")
+            print(data)
+            print("Summary")
+            print(data.summary)
+            return data
+        except Exception as e:
+            print("Error al parsear:", e)
+            print("Respuesta cruda:", response.text)
     except Exception as e:
-        print("Error al parsear:", e)
-        print("Respuesta cruda:", response.text)
+        print("Error al llamar a gemini:", e)
 
 
-def get_message_analytics(message: str):
-    analytics = dict.fromkeys(['sentiment'])
-    analytics.update({'sentiment': sentiment_analyzer.predict(message).output})
-    print(analytics)
-    return analytics
+
+def get_message_sentiment(message: str):
+    return sentiment_analyzer.predict(message).output
 
 
 """

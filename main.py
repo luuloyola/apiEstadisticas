@@ -15,11 +15,11 @@ from classes.message import Message
 from db.connections import get_chat_session, transaction_stats
 from functions.principal import define_statistics
 
-chat1 = [[1,'hola', 'me siento mal', 'quiero apostar todo al rojo', 'mi papa me va a retar'],
-         [2,'hola', 'me siento bien pero mi amigo no', 'aposto todo a river y perdio', 'como lo ayudo'],
-         [3,'quiero ver taylor swift', 'no apuesto me estan obligando a hacer esto'],
-         [4,'hola como estas', 'sos tonto', 'me caes mal', 'voy a apostar igual no me importa'],
-         [5,'hola', 'me siento pesimo', 'quiero dejar de apostar pero no puedo']]
+chat1 = [[1, 1,'hola', 'me siento mal', 'quiero apostar todo al rojo', 'mi papa me va a retar'],
+         [2, 2,'hola', 'no me digas no sabia! tonto', 'aposto todo a river y perdio', 'como lo ayudo'],
+         [3, None,'no si vos sos lo mas inteligente que existe eh', 'no apuesto me estan obligando a hacer esto'],
+         [4, 2,'hola como estas', 'que pesado sos', 'sos un tonto', 'me caes mal', 'voy a apostar igual no me importa'],
+         [5, 2,'hola', 'me siento pesimo', 'quiero dejar de apostar pero no puedo']]
 
 def mock_messages():
     list_session = dict()
@@ -27,7 +27,7 @@ def mock_messages():
         list_session[i[0]] = []
         for j in i:
             if type(j) is str:
-                new_message = Message([j, i[0],j, datetime.now()])
+                new_message = Message([j, i[0], i[1],j, datetime.now()])
                 list_session[i[0]].append(new_message)
 
     return list_session
@@ -38,12 +38,9 @@ def mock_get():
     stats = dict.fromkeys(chats.keys())
     for key in chats:
         print("estoy en el for de mock con chat numero ",key)
-        #stats[key] =\
-        define_statistics(chats[key])
-    """for i in stats:
-        for j in chats[i]:
-            print(j)
-        print(stats[i])"""
+        stats[key] = define_statistics(chats[key])
+    for i in stats:
+        print(stats[i])
 
 mock_get()
 app = FastAPI()
@@ -62,6 +59,7 @@ async def post_stats():
 
         try:
             transaction_stats(stat, chat)
-            return {"message": "Se crearon las estadísticas correctamente"}
         except Exception as e:
             return{"message": "Se produjo un error interno. Error: %s"%e}
+
+    return {"message": "Se crearon las estadísticas correctamente"}
