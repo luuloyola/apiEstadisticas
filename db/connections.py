@@ -49,7 +49,7 @@ def get_chat_session():
             print("Conexión a BD establecida")
             with conn.cursor() as cur:
                 cur.execute("""
-                    SELECT m."id", m."chatSessionId", cs."chatGroupId", m."content", m."createdAt"
+                    SELECT m."id", m."chatSessionId", cs."chatGroupId", m."content", m."createdAt", m."sender"
                     FROM "Message" AS m
                     JOIN "ChatSession" AS cs ON m."chatSessionId" = cs."id"
                     WHERE cs."sessionEndedAt" IS NOT NULL AND cs."analyzed" = false

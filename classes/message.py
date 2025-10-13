@@ -5,7 +5,11 @@ class Message:
     self.chat_group_id = rows[2]
     self.content = rows[3]
     self.created_at = rows[4]
+    self.role = rows[5]
     self.sentiment = None
+
+  def get_role(self):
+        return self.role
 
   def get_id(self):
       return self.id

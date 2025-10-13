@@ -3,12 +3,18 @@ from classes.statistics import Statistics
 from functions.models import get_llm_response, get_message_sentiment
 from functions.calculations import sum_amount_messages,max_words_per_message,min_words_per_message
 
+def is_user(message: Message):
+    return message.get_role()=="user"
+
 def define_statistics(chat: list[Message]):
     print("entre a define statistics")
-    print(chat[0])
-    total_messages = sum_amount_messages(chat)
-    min_words = min_words_per_message(chat)
-    max_words = max_words_per_message(chat)
+    chat_user_f = filter(is_user, chat)
+    chat_user = list(chat_user_f)
+    print(chat_user)
+
+    total_messages = sum_amount_messages(chat_user)
+    min_words = min_words_per_message(chat_user)
+    max_words = max_words_per_message(chat_user)
 
     print("por obtener la respuesta del llm")
     llm_response = get_llm_response(chat)
@@ -18,7 +24,7 @@ def define_statistics(chat: list[Message]):
     negative_messages = 0
     neutral_messages = 0
     print("por obtener los valores de analytics sentiment")
-    for message in chat:
+    for message in chat_user:
         sentiment = get_message_sentiment(message.get_content())
         match sentiment:
             case 'POS': positive_messages+=1
