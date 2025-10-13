@@ -5,6 +5,8 @@ from dotenv import load_dotenv
 from classes.message import Message
 from classes.statistics import Statistics
 
+load_dotenv()
+
 conn_string = os.getenv("DATABASE_URL")
 encryption_key_hex = os.getenv("ENCRYPTION_KEY")
 
@@ -47,11 +49,11 @@ def get_chat_session():
             print("Conexión a BD establecida")
             with conn.cursor() as cur:
                 cur.execute("""
-                    SELECT m.id, m.chatSessionId, cs.chatGroupId, m.content, m.createdAt
-                    FROM Message AS m
-                    JOIN ChatSession AS cs ON m.chatSessionId = cs.id
-                    WHERE cs.sessionEndedAt IS NOT NULL AND cs.analyzed = false
-                    ORDER BY m.createdAt;
+                    SELECT m."id", m."chatSessionId", cs."chatGroupId", m."content", m."createdAt"
+                    FROM "Message" AS m
+                    JOIN "ChatSession" AS cs ON m."chatSessionId" = cs."id"
+                    WHERE cs."sessionEndedAt" IS NOT NULL AND cs."analyzed" = false
+                    ORDER BY m."createdAt";
                 """)
                 rows = cur.fetchall()
 
@@ -70,6 +72,7 @@ def get_chat_session():
                     row_list[3] = decrypted_content
 
                     new_message = Message(row_list)
+                    print(new_message)
                     list_session[chat_session_id].append(new_message)
 
                 return list_session
@@ -100,37 +103,39 @@ def transaction_stats(stat: Statistics, chat: list[Message]) -> None:
             stat.get_positive_percentage(),
             stat.get_negative_percentage(),
             stat.get_neutral_percentage(),
-            stat.get_chat_group_id()
+            stat.get_chat_group_id(),
+            stat.get_most_frequent_sentiment()
         )
 
         cur.execute("""
-            INSERT INTO Statistic (
+            INSERT INTO "statistics" (
                 summary,
                 chat_id,
                 amount_messages,
                 min_words_per_message,
                 max_words_per_message,
-                hate_speech_percentage,
-                ironic_percentage,
+                hate_speech,
+                ironic,
                 change_theme,
                 bet_type,
                 positive_percentage,
                 negative_percentage,
                 neutral_percentage,
-                chat_group_id
+                chat_group_id,
+                most_frequent_sentiment
             )
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """, insert_values)
 
         for message in chat:
             cur.execute("""
-                UPDATE Message
-                SET sentiment = %s
+                UPDATE "Message"
+                SET "sentimentLabel" = %s
                 WHERE id = %s
             """, (message.get_sentiment(), message.get_id()))
 
         cur.execute("""
-            UPDATE ChatSession
+            UPDATE "ChatSession"
             SET analyzed = TRUE
             WHERE id = %s
         """, (stat.get_chat_id(),))

@@ -5,6 +5,7 @@ from functions.calculations import sum_amount_messages,max_words_per_message,min
 
 def define_statistics(chat: list[Message]):
     print("entre a define statistics")
+    print(chat[0])
     total_messages = sum_amount_messages(chat)
     min_words = min_words_per_message(chat)
     max_words = max_words_per_message(chat)
@@ -30,10 +31,17 @@ def define_statistics(chat: list[Message]):
     negative_percentage = negative_messages/total_messages
     neutral_percentage = neutral_messages/total_messages
 
-    chat_statistics = Statistics(llm_response.hate_speech, llm_response.ironic, min_words, total_messages, llm_response.change_theme, llm_response.bet_type, llm_response.summary, chat[0].chat_id, max_words, chat[0].chat_group_id, positive_percentage, negative_percentage, neutral_percentage)
+    if positive_percentage>=negative_percentage and positive_percentage>=neutral_percentage:
+        most_frequent = "POS"
+    elif negative_percentage>=neutral_percentage:
+        most_frequent = "NEG"
+    else:
+        most_frequent = "NEU"
 
+    chat_statistics = Statistics(llm_response.hate_speech, llm_response.ironic, min_words, total_messages, llm_response.change_theme, llm_response.bet_type, llm_response.summary, chat[0].chat_id, max_words, chat[0].chat_group_id, positive_percentage, negative_percentage, neutral_percentage, most_frequent)
+    print(chat_statistics)
     print("por salir del principal")
-    return chat_statistics
+    return chat_statistics, chat
 
 
 

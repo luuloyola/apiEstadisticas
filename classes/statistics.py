@@ -9,8 +9,9 @@ Estadisticas
 - Quiso cambiar el tema de conversación: T o F
 - Tono irónico: T o F
 """
+from functions.models import BetType
 class Statistics:
-    def __init__(self, hate, irony, min, sum, theme, bet, summary, chat_id, max, chat_group_id, positive_percentage, negative_percentage, neutral_percentage):
+    def __init__(self, hate, irony, min, sum, theme, bet, summary, chat_id, max, chat_group_id, positive_percentage, negative_percentage, neutral_percentage, most_frequent_sentiment):
         self.summary = summary
         self.chat_id = chat_id
         self.chat_group_id = chat_group_id
@@ -24,6 +25,7 @@ class Statistics:
         self.neutral_percentage = neutral_percentage
         self.change_theme = theme
         self.bet_type = bet
+        self.most_frequent_sentiment = most_frequent_sentiment
 
     def set_chat_id(self, chat_id):
         self.chat_id = chat_id
@@ -54,6 +56,9 @@ class Statistics:
 
     def get_summary(self):
         return self.summary
+
+    def get_most_frequent_sentiment(self):
+        return self.most_frequent_sentiment
 
     def get_chat_id(self):
         return self.chat_id
@@ -89,13 +94,20 @@ class Statistics:
         return self.change_theme
 
     def get_bet_type(self):
-        return self.bet_type
+        match self.bet_type:
+            case BetType.LOTERIA: return "LOTERIA"
+            case BetType.DEPORTIVA: return "DEPORTIVA"
+            case BetType.VIDEOJUEGO: return "VIDEOJUEGO"
+            case BetType.CASINO_ONLINE: return "CASINO_ONLINE"
+            case BetType.CASINO_PRESENCIAL: return "CASINO_PRESENCIAL"
+            case BetType.NO_ESPECIFICA: return "NO_ESPECIFICA"
 
     def __str__(self):
         return (
             f"📊 Estadísticas del Chat (ID: {self.chat_id}) (Grupo ID: {self.chat_group_id})\n"
             f"- Resumen: {self.summary}\n"
             f"- Tipo de apuesta: {self.bet_type}\n"
+            f"- Sentimiento mas frecuente: {self.most_frequent_sentiment}\n"
             f"- Cantidad de mensajes: {self.amount_messages}\n"
             f"- Palabras por mensaje (mín): {self.min_words_per_message}\n"
             f"- Palabras por mensaje (máx): {self.max_words_per_message}\n"
