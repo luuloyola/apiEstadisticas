@@ -95,12 +95,13 @@ class Statistics:
 
     def get_bet_type(self):
         match self.bet_type:
-            case BetType.LOTERIA: return "LOTERIA"
-            case BetType.DEPORTIVA: return "DEPORTIVA"
-            case BetType.VIDEOJUEGO: return "VIDEOJUEGO"
-            case BetType.CASINO_ONLINE: return "CASINO_ONLINE"
-            case BetType.CASINO_PRESENCIAL: return "CASINO_PRESENCIAL"
-            case BetType.NO_ESPECIFICA: return "NO_ESPECIFICA"
+            case "Loteria": return "LOTERIA"
+            case "Deportiva": return "DEPORTIVA"
+            case "Videojuego": return "VIDEOJUEGO"
+            case "Casino Online": return "CASINO_ONLINE"
+            case "Casino Presencial": return "CASINO_PRESENCIAL"
+            case "No especifica": return "NO_ESPECIFICA"
+        return "NO_ESPECIFICA"
 
     def __str__(self):
         return (

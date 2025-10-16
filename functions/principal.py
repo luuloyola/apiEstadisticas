@@ -7,23 +7,18 @@ def is_user(message: Message):
     return message.get_role()=="user"
 
 def define_statistics(chat: list[Message]):
-    print("entre a define statistics")
     chat_user_f = filter(is_user, chat)
     chat_user = list(chat_user_f)
-    print(chat_user)
 
     total_messages = sum_amount_messages(chat_user)
     min_words = min_words_per_message(chat_user)
     max_words = max_words_per_message(chat_user)
 
-    print("por obtener la respuesta del llm")
     llm_response = get_llm_response(chat)
-    print(llm_response.summary)
 
     positive_messages = 0
     negative_messages = 0
     neutral_messages = 0
-    print("por obtener los valores de analytics sentiment")
     for message in chat_user:
         sentiment = get_message_sentiment(message.get_content())
         match sentiment:
@@ -45,8 +40,6 @@ def define_statistics(chat: list[Message]):
         most_frequent = "NEU"
 
     chat_statistics = Statistics(llm_response.hate_speech, llm_response.ironic, min_words, total_messages, llm_response.change_theme, llm_response.bet_type, llm_response.summary, chat[0].chat_id, max_words, chat[0].chat_group_id, positive_percentage, negative_percentage, neutral_percentage, most_frequent)
-    print(chat_statistics)
-    print("por salir del principal")
     return chat_statistics, chat
 
 
