@@ -38,7 +38,8 @@ class LlmResponse(BaseModel):
 
 def get_llm_response(chat: list[Message]):
     messages_content = [m.get_content() for m in chat]
-    messages_content.remove("")
+    if messages_content.__contains__(""):
+        messages_content.remove("")
     try:
         response = client.models.generate_content(
             model="gemini-2.5-flash",
