@@ -48,7 +48,7 @@ def verify_token(authorization: str = Header(None)):
 @app.post("/stats")
 async def post_stats(authorized: bool = Depends(verify_token)):
     print("Entre a la API")
-    list_session = await get_chat_session()
+    list_session = get_chat_session()
 
     if not list_session:
         raise HTTPException(status_code=204, detail="No hay sesiones nuevas para procesar.")
