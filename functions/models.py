@@ -1,7 +1,7 @@
 import os
 import enum
 from typing import Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ValidationError
 from pysentimiento import create_analyzer
 from google import genai
 from google.genai import types
@@ -53,34 +53,10 @@ def get_llm_response(chat: list[Message]):
 
         try:
             data = LlmResponse.model_validate_json(response.text)
-            print("\nPRIMERO EL OBJETO COMPLETO\n")
-            print(data)
-            print(data.bet_type)
-            print("Summary")
-            print(data.summary)
             return data
         except Exception as e:
-            print("Error en parseo:", e)
-            print("Respuesta cruda:", response.text)
-
-            try:
-                data = json.loads(response.text)
-
-                # Crear el objeto de respuesta con el enum convertido
-                parsed_response = {
-                    'summary': data.get("summary", ""),
-                    'bet_type': data.get("bet_type", "No especifica"),
-                    'hate_speech': bool(data.get("hate_speech", False)),
-                    'ironic': bool(data.get("ironic", False)),
-                    'change_theme': bool(data.get("change_theme", False))
-                }
-
-                print("\nRespuesta parseada:", parsed_response)
-                return parsed_response
-            except json.JSONDecodeError as e:
-                print("Error al decodificar JSON:", e)
-                return None
-
+            print("Error de parseo")
+            return None
     except Exception as e:
         print(f"\nError al llamar a gemini: {e}")
         return None

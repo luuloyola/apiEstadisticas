@@ -52,7 +52,7 @@ def get_chat_session():
                     SELECT m."id", m."chatSessionId", cs."chatGroupId", m."content", m."createdAt", m."sender"
                     FROM "Message" AS m
                     JOIN "ChatSession" AS cs ON m."chatSessionId" = cs."id"
-                    WHERE cs."sessionEndedAt" IS NOT NULL AND cs."analyzed" = false
+                    WHERE (cs."sessionEndedAt" IS NOT NULL OR cs."updatedAt" + INTERVAL '4 hours' < NOW()) AND cs."analyzed" = false
                     ORDER BY m."createdAt";
                 """)
                 rows = cur.fetchall()

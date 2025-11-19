@@ -35,9 +35,9 @@ def verify_token(authorization: str = Header(None)):
     try:
         scheme, token = authorization.split()
         if scheme.lower() != 'bearer':
-            raise HTTPException(status_code=401, detail="Usar Bearer token")
+            raise HTTPException(status_code=401, detail="Error de autenticación")
     except:
-        raise HTTPException(status_code=401, detail="Formato inválido")
+        raise HTTPException(status_code=401, detail="Error de autenticación")
 
     if not VALID_TOKEN or not secrets.compare_digest(token, VALID_TOKEN):
         raise HTTPException(status_code=401, detail="No autorizado")
