@@ -9,7 +9,6 @@ def is_user(message: Message):
 def define_statistics(chat: list[Message]):
     chat_user_f = filter(is_user, chat)
     chat_user = list(chat_user_f)
-    print(chat_user)
 
     if len(chat_user)==0:
         print("Solo habían mensajes del asistente")

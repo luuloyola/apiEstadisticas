@@ -7,7 +7,6 @@ from google import genai
 from google.genai import types
 from dotenv import load_dotenv
 from classes.message import Message
-import json
 
 # Analizadores de mensajes
 sentiment_analyzer = create_analyzer(task="sentiment", lang="es")
@@ -48,8 +47,6 @@ def get_llm_response(chat: list[Message]):
                 response_schema=LlmResponse),
             contents=messages_content
         )
-
-        print(response.text)
 
         try:
             data = LlmResponse.model_validate_json(response.text)

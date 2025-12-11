@@ -61,7 +61,6 @@ def get_chat_session():
                     print("No hay sesiones pendientes de análisis")
                     return None
 
-                print(len(rows))
                 list_session = {}
                 for row in rows:
                     chat_session_id = row[1]
@@ -73,7 +72,6 @@ def get_chat_session():
                     row_list[3] = decrypted_content
 
                     new_message = Message(row_list)
-                    print(new_message)
                     list_session[chat_session_id].append(new_message)
 
                 return list_session
