@@ -40,9 +40,10 @@ def define_statistics(chat: list[Message]):
 
             message.set_sentiment(sentiment)
 
-        positive_percentage = positive_messages / total_messages
-        negative_percentage = negative_messages / total_messages
-        neutral_percentage = neutral_messages / total_messages
+        positive_percentage = (positive_messages / total_messages) * 100
+        negative_percentage = (negative_messages / total_messages) * 100
+        neutral_percentage = (neutral_messages / total_messages) * 100
+
 
         if positive_percentage >= negative_percentage and positive_percentage >= neutral_percentage:
             most_frequent = "POS"
@@ -52,7 +53,6 @@ def define_statistics(chat: list[Message]):
             most_frequent = "NEU"
 
     llm_response = get_llm_response(chat)
-    
     chat_statistics = Statistics(llm_response.hate_speech, llm_response.ironic, min_words, total_messages, llm_response.change_theme, llm_response.bet_type, llm_response.summary, chat[0].chat_id, max_words, chat[0].chat_group_id, positive_percentage, negative_percentage, neutral_percentage, most_frequent)
     return chat_statistics, chat
 
