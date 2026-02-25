@@ -154,3 +154,24 @@ def transaction_stats(stat: Statistics, chat: list[Message]) -> None:
     finally:
         if conn:
             conn.close()
+
+
+def delete_messages() -> None:
+    try:
+        with psycopg2.connect(conn_string) as conn:
+            with conn.cursor() as cur:
+                cur.execute("""
+                    DELETE FROM "Message" m
+                    USING "ChatSession" cs
+                    WHERE m."chatSessionId" = cs."id"
+                    AND cs."analyzed" = true
+                """)
+
+                deleted = cur.rowcount
+                print(f"Deleted {deleted} messages")
+    except psycopg2.Error as e:
+        print(f"Error en transacción: {e}")
+        raise
+    except Exception as e:
+        print(f"Database error: {e}")
+        raise

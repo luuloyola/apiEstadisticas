@@ -4,9 +4,29 @@ from dotenv import load_dotenv
 import os
 from fastapi import FastAPI, HTTPException, Depends, Header
 from fastapi.middleware.cors import CORSMiddleware
-from db.connections import get_chat_session, transaction_stats
+from db.connections import get_chat_session, transaction_stats, delete_messages
 from functions.principal import define_statistics
-app = FastAPI()
+from contextlib import asynccontextmanager
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+
+scheduler = AsyncIOScheduler()
+
+@scheduler.scheduled_job('cron', id='clean_db', day='last sun')
+def scheduled_messages_cleanning():
+    try:
+        print("Por borrar mensajes")
+        delete_messages()
+        print("Mensajes borrados")
+    except Exception as e:
+        print("No se pudieron borrar los mensajes")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    scheduler.start()
+    yield
+    scheduler.shutdown()
+
+app = FastAPI(lifespan=lifespan)
 
 origins = [
     "http://localhost:3000",
@@ -36,7 +56,7 @@ def verify_token(authorization: str = Header(None)):
         scheme, token = authorization.split()
         if scheme.lower() != 'bearer':
             raise HTTPException(status_code=401, detail="Error de autenticación")
-    except:
+    except Exception as e:
         raise HTTPException(status_code=401, detail="Error de autenticación")
 
     if not VALID_TOKEN or not secrets.compare_digest(token, VALID_TOKEN):
